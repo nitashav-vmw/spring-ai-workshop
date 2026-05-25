@@ -44,6 +44,19 @@ public class ChatController {
     }
 
     /**
+     * Take in a topic as a request parameter and use that param in the user message
+     * @param topic
+     * @return
+     */
+    @GetMapping("/jokes-by-weather")
+    public String jokesByTopic(@RequestParam String weather) {
+        return chatClient.prompt()
+                .user(u -> u.text("Tell me a joke about weather").param("weather",weather))
+                .call()
+                .content();
+    }
+
+    /**
      * What if you didn't want to get a String back, and you wanted the whole response?
      * @param message
      * @return
