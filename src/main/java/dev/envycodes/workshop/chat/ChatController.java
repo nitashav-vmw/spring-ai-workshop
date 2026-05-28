@@ -19,8 +19,8 @@ public class ChatController {
 
     /**
      * A basic example of how to use the chat client to pass a message and call the LLM
-     * @param message
-     * @return
+     * @param message the user message to send to the LLM
+     * @return the LLM response content
      */
     @GetMapping("/")
     public String joke(@RequestParam(value = "message", defaultValue = "Tell me a dad joke about Dogs") String message) {
@@ -32,34 +32,38 @@ public class ChatController {
 
     /**
      * Take in a topic as a request parameter and use that param in the user message
-     * @param topic
-     * @return
+     * @param topic the subject about which a joke is requested
+     * @return a joke about the provided topic
      */
     @GetMapping("/jokes-by-topic")
     public String jokesByTopic(@RequestParam String topic) {
         return chatClient.prompt()
-                .user(u -> u.text("Tell me a joke about {topic}").param("topic",topic))
+                .user(u -> u.text("Tell me a joke about {{topic}}").param("topic", topic))
                 .call()
                 .content();
     }
 
     /**
-     * Take in a topic as a request parameter and use that param in the user message
-     * @param topic
-     * @return
+     * Take in a weather condition as a request parameter and use that param in the user message.
+     * @param weather the weather condition (e.g., sunny, rainy) for which a joke is requested
+     * @return a joke about the provided weather condition
      */
     @GetMapping("/jokes-by-weather")
-    public String jokesByTopic(@RequestParam String weather) {
+    public String jokesByWeather(@RequestParam String weather) {
+        // Simple validation – avoid empty weather values
+        if (weather == null || weather.isBlank()) {
+            return "Please provide a non‑empty weather parameter.";
+        }
         return chatClient.prompt()
-                .user(u -> u.text("Tell me a joke about weather").param("weather",weather))
+                .user(u -> u.text("Tell me a joke about {{weather}}").param("weather", weather))
                 .call()
                 .content();
     }
 
     /**
      * What if you didn't want to get a String back, and you wanted the whole response?
-     * @param message
-     * @return
+     * @param message the user message to send to the LLM
+     * @return the full {@link ChatResponse} object
      */
     @GetMapping("jokes-with-response")
     public ChatResponse jokeWithResponse(@RequestParam(value = "message", defaultValue = "Tell me a dad joke about computers") String message) {
@@ -70,4 +74,3 @@ public class ChatController {
     }
 
 }
-
